@@ -53,7 +53,6 @@ cv::Mat ImageInput::read() {
         TIME_END - TIME_START)
         .count();
     time_taken = time_in_nano * 1e-9;
-    std::cout << "FRAME: " << this->frame << std::endl;
     return this->frame;
 }
 
