@@ -21,13 +21,12 @@ void AnalogueBus::hard_sigmoid(AnalogueRegister &a, AnalogueRegister &a0,
     cv::Mat &dst = a.read();
     cv::Mat &mask = FLAG.read();
 
-    /* std::cout << "cv mat dst " << dst << std::endl; */
-    cv::threshold(src, scratch, 2.5, 1, cv::THRESH_TRUNC);
-    // maxval is unused in THRESH_TOZERO
-    cv::threshold(scratch, scratch, -2.5, 0, cv::THRESH_TOZERO);
-
-    cv::multiply(0.2, scratch, scratch);
+    cv::multiply(0.2, src, scratch);
     cv::add(scratch, 0.5, scratch);
+
+    cv::threshold(scratch, scratch, 1, 1, cv::THRESH_TRUNC);
+    // maxval is unused in THRESH_TOZERO
+    cv::threshold(scratch, scratch, 0, 0, cv::THRESH_TOZERO);
 
     scratch.copyTo(dst, mask);
 }
