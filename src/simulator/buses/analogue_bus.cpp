@@ -21,6 +21,11 @@ void AnalogueBus::hard_sigmoid(AnalogueRegister &a, AnalogueRegister &a0,
     cv::Mat &dst = a.read();
     cv::Mat &mask = FLAG.read();
 
+    double min, max;
+    cv::minMaxLoc(a0.read(), &min, &max);
+    std::cout << "Sigmoid In: " << a0.name_ << ", MIN: " << min << ", MAX: " << max << std::endl;
+
+
     cv::multiply(0.2, src, scratch);
     cv::add(scratch, 0.5, scratch);
 

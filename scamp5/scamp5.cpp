@@ -10,6 +10,7 @@
 
 #include <filesystem>
 #include <iostream>
+#include <fstream>
 #include <ostream>
 #include <utility>
 #include "simulator/external/parser.h"
@@ -1570,26 +1571,36 @@ void SCAMP5::scamp5_scan_boundingbox(const std::shared_ptr<DREG>& dr, uint8_t *v
     // pointer to a buffer of 4 byte
 }
 
-// Simulator specific
 
-//todo remove
-void SCAMP5::print_stats() {
+// Simulator specific
+//move to base class
+void SCAMP5::print_stats(json &config, const std::string &output_path) {
     // TODO move
 #ifdef TRACK_STATISTICS
-    this->update_static(); //move
+    this->update_static();  //move
+    int num_pes = rows_ * cols_ / (row_stride_ * col_stride_);
+    std::cout << "Number of PEs: " << num_pes << std::endl;
     Architecture::print_stats(rows_, cols_);
-//    json j;
-//    j["Total number of cycles"] = counter->get_cycles();
-//    j["Equivalent in seconds"] = counter->to_seconds(config_.clock_rate_);
-//
-//    // this.print_stats(counter);
-//    this->write_stats(*counter, j);
-//    std::cout << std::setw(2) << j << std::endl;
-//    std::ofstream file_out;
-//    std::cout << std::filesystem::current_path().string() << std::endl;
-//    file_out.open(std::filesystem::current_path().string() + "/output.json");
-//    file_out << std::setw(2) << j;
-//    file_out.close();
+
+    json j;
+    j["Config"] = config;
+    j["Number of PEs"] = num_pes;
+    this->write_stats(rows_, cols_, j);
+    //    std::cout << std::setw(2) << j << std::endl;
+    std::ofstream file_out;
+    const auto p1 = std::chrono::system_clock::now();
+    std::string epoch = std::to_string(std::chrono::duration_cast<std::chrono::seconds>(p1.time_since_epoch()).count());
+
+    std::string out = std::filesystem::current_path().string() + "/" + epoch + ".json";
+
+    if (!output_path.empty()) {
+        out = std::filesystem::current_path().string() + "/" + output_path + ".json";
+    }
+
+    std::cout << "Saved to " << out << std::endl;
+    file_out.open(out);
+    file_out << std::setw(2) << j;
+    file_out.close();
 #endif
 #ifndef TRACK_STATISTICS
     std::cerr << "Simulator has not been compiled with statistic tracking support. Recompile with -DTRACK_STATISTICS=ON" << std::endl;

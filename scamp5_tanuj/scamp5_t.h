@@ -17,6 +17,8 @@ class SCAMP5T : public SCAMP5 {
     void init();
 
     void hard_sigmoid(const std::shared_ptr<AnalogueRegister>&dst, const std::shared_ptr<AnalogueRegister>&src);
+    void maxpool(const std::shared_ptr<AnalogueRegister>&reg);
+    void maxpool_sparse(const std::shared_ptr<AnalogueRegister>&reg);
 };
 
 
